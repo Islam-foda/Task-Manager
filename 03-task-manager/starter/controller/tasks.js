@@ -20,19 +20,50 @@ const postTask = async (req, res) => {
 
 const getTask = async (req, res) => {
   try {
-    const snglTask = await Task.findOne({ _id: req.params.id });
-    res.status(200).json({ Task: snglTask });
+    const { id: taskID } = req.params;
+    const task = await Task.findOne({ _id: taskID });
+    if (!task) {
+      return res
+        .status(404)
+        .json({ msg: `no Task with the Id ${req.params.id}` });
+    }
+    res.status(200).json({ task });
   } catch (err) {
-    return res.status(500).json({ error: err });
+    res.status(500).json({ error: err });
   }
 };
 
-const updateTask = (req, res) => {
-  res.send(`Edit the tasks`);
+const updateTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findOneAndUpdate({ _id: taskID }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!task) {
+      return res
+        .status(404)
+        .json({ msg: `no Task with the Id ${req.params.id}` });
+    }
+    res.status(200).json({ task });
+  } catch (err) {
+    res.status(500).json({ error: ` ${err}` });
+  }
 };
 
-const delTask = (req, res) => {
-  res.send(`Delete the tasks`);
+const delTask = async (req, res) => {
+  try {
+    const { id: taskId } = req.params;
+    const delTask = await Task.findOneAndDelete({ _id: taskId });
+    if (!delTask) {
+      return res
+        .status(404)
+        .json({ msg: `no Task with the Id ${req.params.id}` });
+    }
+    res.status(200).send();
+  } catch (err) {
+    res.status(500).json({ error: err });
+  }
 };
 
 module.exports = {

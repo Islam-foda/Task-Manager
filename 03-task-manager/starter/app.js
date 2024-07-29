@@ -8,13 +8,11 @@ const tasks = require("./routers/tasks");
 const port = 3000;
 
 //middle Ware
+app.use(express.static("./public"));
 app.use(express.json());
-app.use("/api/v1/tasks", tasks);
 
 //Route
-app.get("/hello", (req, res) => {
-  res.status(200).send(`Task Manager App`);
-});
+app.use("/api/v1/tasks", tasks);
 
 //Connect DB and Start the Server
 const start = async () => {
